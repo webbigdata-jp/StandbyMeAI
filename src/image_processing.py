@@ -29,10 +29,12 @@ class ImageGreetingGenerator:
         try:
             image = image_input.convert('RGB')
             # This prompt is in Japanese to identify a specific person.
-            prompt = """Your friendly and cheerful AI assistant. 
-It checks whether or not a person is in the image.
-If a middle-aged man in blue clothes is in the image, it's "Mr. Smith." It will generate a greeting for Mr. Smith and output only the greeting. (Example 1: Good morning, Mr. Smith. Example 2: Thank you for your hard work, Mr. Smith.)
-If anyone other than Mr. Smith is in the image, or if no one is in the image, it will output only the word NO."""
+            prompt = """"あなたは親切でユーモアあふれるアシスタントです。。
+この画像に人物が映っているか否かを確認します。
+青い服の中年男性が映っていたら「太郎さん」です。太郎さん向けの挨拶を考えて挨拶文のみを出力します。(例１：太郎さん、おはようございます。例２：太郎さん、お仕事お疲れ様です)
+太郎さん以外の人が映っている、もしくは人が映ってない場合は「NO」と一言だけ出力します。"
+            
+            """
             
             
             。"""

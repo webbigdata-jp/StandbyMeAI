@@ -1,6 +1,6 @@
 # StandbyMeAI
 
-[![Google - The Gemma 3n Impact Challenge](https://www.kaggle.com/competitions/google-gemma-3n-hackathon/overview)
+[![Kaggle Contest](https://img.shields.io/badge/Kaggle-Contest%20Page-blue.svg)](https://www.kaggle.com/competitions/google-gemma-3n-hackathon/overview)]
 
 StandbyMeAI is an interactive AI assistant project developed for a Kaggle competition. It leverages multimodal models to understand visual information from a webcam, generate contextual responses, and communicate using Text-to-Speech (TTS) with a symbolic face animation.
 
@@ -105,7 +105,7 @@ This application requires a separate server process running `llama.cpp` to handl
 To switch to English TTS:
 1.  Download the **Orpheus GGUF model** as described in Step 2.
 2.  Update the `llama-server` command to point to the Orpheus model file.
-3.  In the Python script (`tts_system.py` or `main.py`), you will need to modify the prompt generation logic (the `_generate_voice_tokens` method) to match the format required by the Orpheus model.
+3.  In the Python script (`tts_system.py` or `main.py`), you will need to modify the prompt(in image_processing.py) and speaker name (in tts_system.py eg:matsukaze_male[neutral] to tara) to match the format required by the Orpheus model.
 
 ## Usage
 
