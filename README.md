@@ -1,6 +1,6 @@
 # StandbyMeAI
 
-[![Kaggle Contest](https://img.shields.io/badge/Kaggle-Contest%20Page-blue.svg)](https://www.kaggle.com/competitions/google-gemma-3n-hackathon/overview)]
+[![Kaggle Contest](https://img.shields.io/badge/Kaggle-Contest%20Page-blue.svg)](https://www.kaggle.com/competitions/google-gemma-3n-hackathon/overview)
 
 StandbyMeAI is an interactive AI assistant project developed for a Kaggle competition. It leverages multimodal models to understand visual information from a webcam, generate contextual responses, and communicate using Text-to-Speech (TTS) with a symbolic face animation.
 
