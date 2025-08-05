@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高齢者向け音声認識システム</title>
+    <style>
+        body {
+            font-family: 'Yu Gothic', 'Meiryo', sans-serif;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.8em;
+            color: #2c5530;
+            font-weight: normal;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            border: none;
+            color: white;
+            padding: 20px 40px;
+            font-size: 1.4em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #5CBF60, #55b059);
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        button.stop-btn {
+            background: linear-gradient(45deg, #f44336, #e53935);
+        }
+        
+        button.stop-btn:hover {
+            background: linear-gradient(45deg, #f55a4e, #ef5350);
+        }
+        
+        button.clear-btn {
+            background: linear-gradient(45deg, #ff9800, #f57c00);
+        }
+        
+        button.clear-btn:hover {
+            background: linear-gradient(45deg, #ffab40, #ff8f00);
+        }
+        
+        .status {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 1.3em;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #e0e0e0;
+            font-weight: bold;
+        }
+        
+        .status.listening {
+            background: rgba(76, 175, 80, 0.1);
+            border-color: #4CAF50;
+            color: #2e7d32;
+            animation: pulse 2s infinite;
+        }
+        
+        .status.processing {
+            background: rgba(255, 152, 0, 0.1);
+            border-color: #ff9800;
+            color: #ef6c00;
+        }
+        
+        .status.ready {
+            background: rgba(33, 150, 243, 0.1);
+            border-color: #2196F3;
+            color: #1565c0;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+        
+        .audio-visualizer {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+        }
+        
+        .volume-bar {
+            width: 400px;
+            height: 15px;
+            background: rgba(200, 200, 200, 0.5);
+            border-radius: 8px;
+            margin: 15px auto;
+            overflow: hidden;
+            border: 2px solid #ddd;
+        }
+        
+        .volume-level {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A, #CDDC39, #FFC107, #FF9800);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+        
+        .transcription {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            min-height: 300px;
+            font-size: 1.2em;
+            line-height: 1.8;
+            border: 2px solid #e8f5e8;
+        }
+        
+        .transcription h3 {
+            margin-top: 0;
+            color: #2c5530;
+            font-size: 1.4em;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        
+        .transcript-item {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(76, 175, 80, 0.05);
+            border-left: 4px solid #4CAF50;
+            border-radius: 8px;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .transcript-item.greeting {
+            border-left-color: #2196F3;
+            background: rgba(33, 150, 243, 0.05);
+        }
+        
+        .transcript-item.long-story {
+            border-left-color: #ff9800;
+            background: rgba(255, 152, 0, 0.05);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .transcript-text {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .transcript-meta {
+            font-size: 0.9em;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .meta-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.9em;
+            z-index: 1000;
+        }
+        
+        .connection-status.disconnected {
+            background: #f44336;
+        }
+        
+        .speech-indicator {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+        
+        .speech-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #ccc;
+            border-radius: 50%;
+            margin: 0 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .speech-dot.active {
+            background: #4CAF50;
+            animation: speechPulse 1s infinite;
+        }
+        
+        @keyframes speechPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status" id="connectionStatus">接続中...</div>
+    
+    <div class="container">
+        <h1>🎤 音声会話システム</h1>
+        
+        <div class="controls">
+            <button id="startBtn" onclick="startRecording()">🎙️ 聞き取り開始</button>
+            <button id="stopBtn" onclick="stopRecording()" disabled>⏹️ 停止</button>
+            <button class="clear-btn" onclick="clearTranscriptions()">🗑️ 履歴クリア</button>
+        </div>
+        
+        <div id="status" class="status ready">準備完了 - 聞き取り開始ボタンを押してください</div>
+        
+        <div class="speech-indicator">
+            音声検出: 
+            <span class="speech-dot" id="dot1"></span>
+            <span class="speech-dot" id="dot2"></span>
+            <span class="speech-dot" id="dot3"></span>
+        </div>
+        
+        <div class="audio-visualizer">
+            <div style="font-size: 1.1em; margin-bottom: 10px;">🔊 音量レベル</div>
+            <div class="volume-bar">
+                <div id="volumeLevel" class="volume-level"></div>
+            </div>
+        </div>
+        
+        <div class="transcription">
+            <h3>💬 認識された音声</h3>
+            <div id="transcriptions">
+                <p style="color: #666; text-align: center; font-style: italic;">
+                    ここに認識された音声が表示されます
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder = null;
+        let audioContext = null;
+        let websocket = null;
+        let isRecording = false;
+        let analyser = null;
+        let dataArray = null;
+        let speechDots = [];
+        
+        // 音声検出インジケーター
+        speechDots = [
+            document.getElementById('dot1'),
+            document.getElementById('dot2'),
+            document.getElementById('dot3')
+        ];
+        
+        async function startRecording() {
+            try {
+                // マイクアクセス許可を取得
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        sampleRate: 16000,
+                        channelCount: 1,
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                });
+                
+                // WebSocket接続
+                websocket = new WebSocket('ws://localhost:8002/ws');
+                
+                websocket.onopen = () => {
+                    console.log('WebSocket接続が確立されました');
+                    updateStatus('聞き取り中...お話しください', 'listening');
+                    updateConnectionStatus('接続中', true);
+                };
+                
+                websocket.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    handleWebSocketMessage(data);
+                };
+                
+                websocket.onerror = (error) => {
+                    console.error('WebSocketエラー:', error);
+                    updateStatus('接続エラーが発生しました', 'error');
+                    updateConnectionStatus('エラー', false);
+                };
+                
+                websocket.onclose = () => {
+                    console.log('WebSocket接続が切断されました');
+                    updateStatus('接続が切断されました', 'error');
+                    updateConnectionStatus('切断', false);
+                };
+                
+                // オーディオコンテキストの設定
+                audioContext = new AudioContext({ sampleRate: 16000 });
+                const source = audioContext.createMediaStreamSource(stream);
+                
+                // 音量レベル表示用のアナライザー
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                source.connect(analyser);
+                
+                // ScriptProcessorNodeで音声データを処理
+                const processor = audioContext.createScriptProcessor(1024, 1, 1);
+                
+                processor.onaudioprocess = (event) => {
+                    if (websocket && websocket.readyState === WebSocket.OPEN) {
+                        const inputData = event.inputBuffer.getChannelData(0);
+                        
+                        // Float32Arrayをバイナリデータとして送信
+                        const buffer = new ArrayBuffer(inputData.length * 4);
+                        const view = new Float32Array(buffer);
+                        view.set(inputData);
+                        
+                        websocket.send(buffer);
+                        
+                        // 音量レベルを更新
+                        updateVolumeLevel(inputData);
+                    }
+                };
+                
+                source.connect(processor);
+                processor.connect(audioContext.destination);
+                
+                isRecording = true;
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                
+            } catch (error) {
+                console.error('録音開始エラー:', error);
+                updateStatus('マイクアクセスが拒否されました', 'error');
+                updateConnectionStatus('エラー', false);
+            }
+        }
+        
+        function stopRecording() {
+            if (websocket) {
+                websocket.close();
+            }
+            
+            if (audioContext) {
+                audioContext.close();
+            }
+            
+            isRecording = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            
+            updateStatus('停止しました', 'ready');
+            updateConnectionStatus('切断', false);
+            updateVolumeLevel(new Float32Array(1024)); // 音量レベルをリセット
+            updateSpeechIndicator(false);
+        }
+        
+        function handleWebSocketMessage(data) {
+            switch (data.type) {
+                case 'speech_started':
+                    updateStatus('音声を検出しました...', 'listening');
+                    updateSpeechIndicator(true);
+                    break;
+                    
+                case 'speech_detected':
+                    updateSpeechIndicator(true);
+                    break;
+                    
+                case 'speech_ended':
+                    updateStatus('聞き取り中...お話しください', 'listening');
+                    updateSpeechIndicator(false);
+                    break;
+                    
+                case 'processing':
+                    updateStatus('音声を認識中です...', 'processing');
+                    updateSpeechIndicator(false);
+                    break;
+                    
+                case 'transcription':
+                    if (data.result && data.result.text && data.result.text.trim().length > 0) {
+                        addTranscription(data.result, data.timestamp);
+                        updateStatus('聞き取り中...お話しください', 'listening');
+                    }
+                    break;
+            }
+        }
+        
+        function addTranscription(result, timestamp) {
+            const transcriptionsDiv = document.getElementById('transcriptions');
+            
+            // 初回の場合は説明文を削除
+            if (transcriptionsDiv.innerHTML.includes('ここに認識された音声が表示されます')) {
+                transcriptionsDiv.innerHTML = '';
+            }
+            
+            const transcriptItem = document.createElement('div');
+            transcriptItem.className = `transcript-item ${result.speech_type || 'conversation'}`;
+            
+            const time = new Date(timestamp * 1000).toLocaleTimeString('ja-JP');
+            const duration = result.metadata ? result.metadata.duration.toFixed(1) : '0.0';
+            const pauseBefore = result.metadata && result.metadata.pause_before > 0 ? 
+                               result.metadata.pause_before.toFixed(1) : '0.0';
+            
+            // 発話タイプの表示名
+            const typeNames = {
+                'greeting': '挨拶',
+                'long_story': '長いお話',
+                'conversation': '会話'
+            };
+            const typeName = typeNames[result.speech_type] || '会話';
+            
+            transcriptItem.innerHTML = `
+                <div class="transcript-text">${result.text}</div>
+                <div class="transcript-meta">
+                    <span class="meta-item">📅 ${time}</span>
+                    <span class="meta-item">⏱️ ${duration}秒</span>
+                    <span class="meta-item">⏸️ 間隔: ${pauseBefore}秒</span>
+                    <span class="meta-item">🏷️ ${typeName}</span>
+                    <span class="meta-item">✅ ${result.confidence}</span>
+                </div>
+            `;
+            
+            transcriptionsDiv.appendChild(transcriptItem);
+            transcriptionsDiv.scrollTop = transcriptionsDiv.scrollHeight;
+            
+            // 音声にあわせてアニメーション
+            setTimeout(() => {
+                transcriptItem.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    transcriptItem.style.transform = 'scale(1)';
+                }, 200);
+            }, 100);
+        }
+        
+        function clearTranscriptions() {
+            const transcriptionsDiv = document.getElementById('transcriptions');
+            transcriptionsDiv.innerHTML = `
+                <p style="color: #666; text-align: center; font-style: italic;">
+                    ここに認識された音声が表示されます
+                </p>
+            `;
+        }
+        
+        function updateStatus(message, type = '') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+        
+        function updateConnectionStatus(status, connected) {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.textContent = `🔗 ${status}`;
+            statusDiv.className = `connection-status ${connected ? '' : 'disconnected'}`;
+        }
+        
+        function updateVolumeLevel(audioData) {
+            // RMS音量計算
+            let sum = 0;
+            for (let i = 0; i < audioData.length; i++) {
+                sum += audioData[i] * audioData[i];
+            }
+            const rms = Math.sqrt(sum / audioData.length);
+            const volume = Math.min(100, rms * 1500); // 0-100にスケール
+            
+            const volumeLevel = document.getElementById('volumeLevel');
+            volumeLevel.style.width = volume + '%';
+        }
+        
+        function updateSpeechIndicator(isActive) {
+            speechDots.forEach((dot, index) => {
+                setTimeout(() => {
+                    if (isActive) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                }, index * 100); // 順次アニメーション
+            });
+        }
+        
+        // 自動リサイズ機能
+        function adjustLayoutForElderly() {
+            const container = document.querySelector('.container');
+            const isSmallScreen = window.innerWidth < 768;
+            
+            if (isSmallScreen) {
+                container.style.padding = '20px';
+                document.querySelectorAll('button').forEach(btn => {
+                    btn.style.fontSize = '1.2em';
+                    btn.style.padding = '15px 25px';
+                });
+            }
+        }
+        
+        // ページ読み込み時とリサイズ時に調整
+        window.addEventListener('load', adjustLayoutForElderly);
+        window.addEventListener('resize', adjustLayoutForElderly);
+        
+        // ページ離脱時のクリーンアップ
+        window.addEventListener('beforeunload', () => {
+            if (isRecording) {
+                stopRecording();
+            }
+        });
+        
+        // 定期的な接続確認（30秒ごと）
+        setInterval(() => {
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                updateConnectionStatus('接続中', true);
+            } else if (isRecording) {
+                updateConnectionStatus('再接続中...', false);
+                // 自動再接続の試行
+                if (websocket && websocket.readyState === WebSocket.CLOSED) {
+                    console.log('自動再接続を試行します...');
+                    // 必要に応じて再接続ロジックを追加
+                }
+            }
+        }, 30000);
+        
+        // エラーハンドリング強化
+        window.addEventListener('error', (event) => {
+            console.error('グローバルエラー:', event.error);
+            updateStatus('システムエラーが発生しました', 'error');
+        });
+        
+        // 高齢者向けアクセシビリティ改善
+        document.addEventListener('keydown', (event) => {
+            // スペースキーで録音開始/停止
+            if (event.code === 'Space') {
+                event.preventDefault();
+                if (!isRecording) {
+                    startRecording();
+                } else {
+                    stopRecording();
+                }
+            }
+            
+            // Escapeキーで停止
+            if (event.code === 'Escape' && isRecording) {
+                stopRecording();
+            }
+        });
+        
+        // 初期表示メッセージ
+        setTimeout(() => {
+            updateStatus('マイクの使用を許可して、聞き取り開始ボタンを押してください', 'ready');
+        }, 1000);
+    </script>
+</body>
+</html>

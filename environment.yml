@@ -1,0 +1,21 @@
+name: StandbyMeAI
+channels:
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch::pytorch=2.4.1
+  - pytorch::torchvision=0.19.1
+  - pytorch::torchaudio=2.4.1
+  - pytorch::cpuonly # for CPU
+  - pillow
+  - pyaudio
+  - scipy
+  - opencv
+  - pip
+  - pip:
+    - transformers
+    - timm
+    - httpx
+    - snac
+    - accelerate
