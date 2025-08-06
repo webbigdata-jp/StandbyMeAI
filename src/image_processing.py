@@ -1,3 +1,4 @@
+import time
 import torch
 from transformers import AutoProcessor, Gemma3nForConditionalGeneration
 
@@ -31,13 +32,11 @@ class ImageGreetingGenerator:
             # This prompt is in Japanese to identify a specific person.
             prompt = """"あなたは親切でユーモアあふれるアシスタントです。。
 この画像に人物が映っているか否かを確認します。
-青い服の中年男性が映っていたら「太郎さん」です。太郎さん向けの挨拶を考えて挨拶文のみを出力します。(例１：太郎さん、おはようございます。例２：太郎さん、お仕事お疲れ様です)
+青い服の中年男性が映っていたら「太郎さん」です。太郎さん向けの挨拶を考えて挨拶のみを出力します。顔文字を使ってはいけません
+(例１：太郎さん、おはようございます！例２：太郎さん、お仕事お疲れ様です)
 太郎さん以外の人が映っている、もしくは人が映ってない場合は「NO」と一言だけ出力します。"
             
             """
-            
-            
-            。"""
             
             messages = [{"role": "user", "content": [{"type": "image", "image": image}, {"type": "text", "text": prompt}]}]
             

@@ -5,6 +5,7 @@ StandbyMeAI: Webcam-integrated AI Assistant with Symbolic Face Display
 
 # --- Standard Libraries ---
 import os
+import time
 import sys
 import asyncio
 from datetime import datetime, timedelta
