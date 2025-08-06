@@ -121,4 +121,4 @@ Press `Ctrl+C` in the terminal to stop the application gracefully.
     ![Stack-chan Example](image/stack-chan.png)
 
 *   **Full Dialogue System**: Integration of high-performance Speech-to-Text (e.g., `whisper.cpp`) and an LLM for conversational abilities.
-*   **Dynamic Prompting**: More sophisticated logic for generating varied and context-aware responses.````
+*   **Dynamic Prompting**: More sophisticated logic for generating varied and context-aware responses.
