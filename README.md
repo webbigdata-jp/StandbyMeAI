@@ -118,7 +118,7 @@ Press `Ctrl+C` in the terminal to stop the application gracefully.
 *   **Physical Embodiment on IoT Devices**:
     Currently, the assistant's face is rendered on the PC monitor for easy verification by the contest judges. However, the ultimate vision for this project is to run on low-cost, standalone IoT hardware. This would give the assistant a true physical presence. For example, it could be embodied in a device like **[Stack-chan](https://github.com/stack-chan/stack-chan)**, as shown below. This transition would free up the PC display and, more importantly, enable the use of various sensors (motion, light, temperature, etc.) to create a much richer and more proactive user experience.
 
-    ![Stack-chan Example](https://i.imgur.com/xT5aLxF.png)
+    ![Stack-chan Example](image/stack-chan.png)
 
 *   **Full Dialogue System**: Integration of high-performance Speech-to-Text (e.g., `whisper.cpp`) and an LLM for conversational abilities.
 *   **Dynamic Prompting**: More sophisticated logic for generating varied and context-aware responses.````
