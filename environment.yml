@@ -14,7 +14,7 @@ dependencies:
   - opencv
   - pip
   - pip:
-    - transformers
+    - transformers==4.45.0
     - timm
     - httpx
     - snac
