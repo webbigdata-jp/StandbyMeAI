@@ -104,10 +104,13 @@ To switch to English TTS:
 
 ## Usage
 
-Once the environment is active and the server is running:```bash
+Once the environment is active and the server is running:
+
+```bash
 cd src
 python main.py
 ```
+
 Press `Ctrl+C` in the terminal to stop the application gracefully.
 
 ## Future Features & Vision
