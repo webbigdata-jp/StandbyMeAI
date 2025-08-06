@@ -16,7 +16,7 @@ graph TD
     D -- Yes --> E[Generate Greeting Text];
     E --> F[Request TTS to llama.cpp Server];
     F --> G[Decode Audio with SNAC];
-    G --> H[Play Audio & Animate Face<br/>(on PC Display / IoT Device)];
+    G --> H["Play Audio & Animate Face<br/>(on PC Display / IoT Device)"];
     D -- No --> I[Wait];
     H --> I;
     I --> J{Wait for 60s};
@@ -45,7 +45,8 @@ graph TD
 ├── environment.yml
 └── src/
     ├── __init__.py
-    └── main.py```
+    └── main.py
+```
 *(It is recommended to split the classes in `main.py` into separate files for better maintainability)*
 
 ## Setup
@@ -114,7 +115,7 @@ Press `Ctrl+C` in the terminal to stop the application gracefully.
 *   **Physical Embodiment on IoT Devices**:
     Currently, the assistant's face is rendered on the PC monitor for easy verification by the contest judges. However, the ultimate vision for this project is to run on low-cost, standalone IoT hardware. This would give the assistant a true physical presence. For example, it could be embodied in a device like **[Stack-chan](https://github.com/stack-chan/stack-chan)**, as shown below. This transition would free up the PC display and, more importantly, enable the use of various sensors (motion, light, temperature, etc.) to create a much richer and more proactive user experience.
 
-    ![Stack-chan Example](image/stack-chan.png)
+    ![Stack-chan Example](https://i.imgur.com/xT5aLxF.png)
 
 *   **Full Dialogue System**: Integration of high-performance Speech-to-Text (e.g., `whisper.cpp`) and an LLM for conversational abilities.
-*   **Dynamic Prompting**: More sophisticated logic for generating varied and context-aware responses.
+*   **Dynamic Prompting**: More sophisticated logic for generating varied and context-aware responses.````
