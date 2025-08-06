@@ -16,7 +16,7 @@ graph TD
     D -- Yes --> E[Generate Greeting Text];
     E --> F[Request TTS to llama.cpp Server];
     F --> G[Decode Audio with SNAC];
-    G --> H[Play Audio & Animate Face];
+    G --> H[Play Audio & Animate Face<br/>(on PC Display / IoT Device)];
     D -- No --> I[Wait];
     H --> I;
     I --> J{Wait for 60s};
@@ -30,6 +30,7 @@ graph TD
 *   **High-Quality TTS**: Converts text into natural-sounding speech using GGUF models served by `llama.cpp`.
 *   **Multilingual Ready**: Easily switch between Japanese and English TTS by changing the model and prompt.
 *   **Animated Interface**: Displays a simple, symbolic face that animates while scanning and speaking.
+*   **Hardware Extensibility**: Designed from the ground up to be deployed on custom IoT hardware, enabling a standalone physical presence.
 
 ## Hardware Requirements
 
@@ -44,9 +45,7 @@ graph TD
 ├── environment.yml
 └── src/
     ├── __init__.py
-    └── main.py
-    └── ... (other source files)
-```
+    └── main.py```
 *(It is recommended to split the classes in `main.py` into separate files for better maintainability)*
 
 ## Setup
@@ -60,7 +59,6 @@ graph TD
     ```
 
 2.  **Create and activate the Conda environment:**
-    This command uses the `environment.yml` file to create a Python environment with all necessary libraries.
     ```bash
     conda env create -f environment.yml
     conda activate StandbyMeAI
@@ -80,43 +78,43 @@ This application requires a separate server process running `llama.cpp` to handl
     ```
 
 2.  **Download the TTS Model (GGUF):**
-    You need to download a GGUF format model. Choose one based on the desired language.
-
-    *   **For Japanese (Recommended):**
-        *   **Model:** [webbigdata/VoiceCore_gguf](https://huggingface.co/webbigdata/VoiceCore_gguf)
-        *   Download a specific file like `VoiceCore-Q4_K-f16.gguf` from the "Files and versions" tab.
-
-    *   **For English:**
-        *   **Model:** [dahara1/orpheus-3b-0.1-ft_gguf](https://huggingface.co/dahara1/orpheus-3b-0.1-ft_gguf)
-        *   Download a GGUF file from its repository.
+    *   **For Japanese:** [webbigdata/VoiceCore_gguf](https://huggingface.co/webbigdata/VoiceCore_gguf)
+    *   **For English:** [dahara1/orpheus-3b-0.1-ft_gguf](https://huggingface.co/dahara1/orpheus-3b-0.1-ft_gguf)
 
 3.  **Run the `llama.cpp` server:**
-    Open a new terminal, navigate to your `llama.cpp` directory, and run the server. The command below is an example for the Japanese VoiceCore model.
-
-    **Example command:**
+    Open a new terminal and run the server with the appropriate model.
+    
+    **Example command for Japanese Model:**
     ```bash
-    ./build/bin/llama-server -m path/to/your/VoiceCore-Q4_K-f16.gguf --prio 3 -c 2048 -e -n -2 --port 8081 --host 0.0.0.0 --no-webui -v --cont-batching
+     path/to/your/llama-server -m path/to/VoiceCore-Q4_K-f16.gguf --prio 3 -c 2048 -e -n -2 --port 8081 --host 0.0.0.0 --no-webui -v --cont-batching
     ```
-    *   Replace `path/to/your/VoiceCore-Q4_K-f16.gguf` with the actual path to your downloaded model file.
-    *   To use a GPU, add flags like `-ngl 35` (replace 35 with the number of layers to offload).
-    *   **Keep this terminal window open.** The server must be running for the main application to work.
+    **Example command for English model:**
+    ```bash
+    path/to/your/llama-server -m path/to/orpheus-3b-Q4_K-f16.gguf --prio 3 -c 2048 -e -n -2 --port 8081 --host 0.0.0.0 --no-webui -v --cont-batching
+    ```
+    *   Replace paths with the actual paths to your `llama-server` executable and `.gguf` model file.
+    *   To use a GPU, add flags like `-ngl 35`.
+    *   **Keep this terminal window open.**
 
 ### Step 3: Configure for English (Optional)
 To switch to English TTS:
-1.  Download the **Orpheus GGUF model** as described in Step 2.
-2.  Update the `llama-server` command to point to the Orpheus model file.
-3.  In the Python script (`tts_system.py` or `main.py`), you will need to modify the prompt(in image_processing.py) and speaker name (in tts_system.py eg:matsukaze_male[neutral] to tara) to match the format required by the Orpheus model.
+1.  Run the `llama-server` with the Orpheus model.
+2.  In the Python script, modify the prompt (in `image_processing.py`) and the speaker name (e.g., `matsukaze_male[neutral]` to `tara` in `tts_system.py`).
 
 ## Usage
 
-Once the Conda environment is active and the `llama.cpp` server is running, start the main application from your project directory:
-
-```bash
-python src/main.py
+Once the environment is active and the server is running:```bash
+cd src
+python main.py
 ```
 Press `Ctrl+C` in the terminal to stop the application gracefully.
 
-## Future Features
+## Future Features & Vision
+
+*   **Physical Embodiment on IoT Devices**:
+    Currently, the assistant's face is rendered on the PC monitor for easy verification by the contest judges. However, the ultimate vision for this project is to run on low-cost, standalone IoT hardware. This would give the assistant a true physical presence. For example, it could be embodied in a device like **[Stack-chan](https://github.com/stack-chan/stack-chan)**, as shown below. This transition would free up the PC display and, more importantly, enable the use of various sensors (motion, light, temperature, etc.) to create a much richer and more proactive user experience.
+
+    ![Stack-chan Example](image/stack-chan.png)
 
 *   **Full Dialogue System**: Integration of high-performance Speech-to-Text (e.g., `whisper.cpp`) and an LLM for conversational abilities.
 *   **Dynamic Prompting**: More sophisticated logic for generating varied and context-aware responses.
