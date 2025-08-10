@@ -55,7 +55,7 @@ graph TD
 
 1.  **Clone this repository:**
     ```bash
-    git clone https://github.com/your-username/StandbyMeAI.git
+    git clone https://github.com/webbigdata-jp/StandbyMeAI.git
     cd StandbyMeAI
     ```
 
@@ -87,11 +87,11 @@ This application requires a separate server process running `llama.cpp` to handl
     
     **Example command for Japanese Model:**
     ```bash
-     path/to/your/llama-server -m path/to/VoiceCore-Q4_K-f16.gguf --prio 3 -c 2048 -e -n -2 --port 8081 --host 0.0.0.0 --no-webui -v --cont-batching
+     path/to/your/llama-server -hf webbigdata/VoiceCore_gguf:VoiceCore-Q4_K-f16.gguf --prio 3 -c 2048 -e -n -2 --port 8081 --host 0.0.0.0 --no-webui -v --cont-batching
     ```
     **Example command for English model:**
     ```bash
-    path/to/your/llama-server -m path/to/orpheus-3b-Q4_K-f16.gguf --prio 3 -c 2048 -e -n -2 --port 8081 --host 0.0.0.0 --no-webui -v --cont-batching
+    path/to/your/llama-server -hf dahara1/orpheus-3b-0.1-ft_gguf:orpheus-3b-Q4_K-f16.gguf --prio 3 -c 2048 -e -n -2 --port 8081 --host 0.0.0.0 --no-webui -v --cont-batching
     ```
     *   Replace paths with the actual paths to your `llama-server` executable and `.gguf` model file.
     *   To use a GPU, add flags like `-ngl 35`.
